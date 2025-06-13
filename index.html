@@ -39,7 +39,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, 0.8); /* Blanco con 80% opacidad */
+      background-color: rgba(255, 255, 255, 0.8);
       z-index: 998;
       display: none;
     }
@@ -171,7 +171,6 @@
     <div id="saldo" class="saldo-text">$ 21,203,600</div>
   </div>
 
-  <!-- Nueva capa blanca translúcida -->
   <div class="menu-overlay" id="menuOverlay"></div>
 
   <button class="floating-btn">$</button>
@@ -180,7 +179,7 @@
   <div class="menu-options" id="menuOptions">
     <div class="menu-item"><span class="option-text">Recarga</span><button class="menu-option icon-reload"></button></div>
     <div class="menu-item"><span class="option-text">Código QR</span><button class="menu-option icon-qr"></button></div>
-    <div class="menu-item"><span class="option-text">Envía</span><button class="menu-option icon-right"></button></div>
+    <div class="menu-item"><span class="option-text">Envía</span><button class="menu-option icon-right" id="enviarBtn"></button></div>
     <div class="menu-item"><span class="option-text">Pide</span><button class="menu-option icon-left"></button></div>
     <div class="menu-item"><span class="option-text">Saca</span><button class="menu-option icon-download"></button></div>
     <div class="menu-item"><span class="option-text">Servicios</span><button class="menu-option icon-grid"></button></div>
@@ -217,6 +216,12 @@
         const action = this.parentElement.querySelector('.option-text').textContent;
         console.log(`Acción seleccionada: ${action}`);
       });
+    });
+
+    // Redireccionar al hacer clic en "Envía"
+    const enviarBtn = document.getElementById('enviarBtn');
+    enviarBtn.addEventListener('click', () => {
+      window.location.href = 'pag1.html';
     });
 
     // Pull to refresh animado
