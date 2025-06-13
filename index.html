@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App de Transferencias</title>
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#d7007f" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Trebuchet MS', sans-serif;
+      background-color: #1f0020;
+      overscroll-behavior: contain;
+    }
+
+    .image-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background-image: url('app.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: transform 0.3s ease;
+      will-change: transform;
+    }
+
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8); /* Blanco con 80% opacidad */
+      z-index: 998;
+      display: none;
+    }
+
+    .saldo-text {
+      position: absolute;
+      top: 156px;
+      width: 100%;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 1px 1px 4px #000000aa;
+      z-index: 10;
+    }
+
+    .floating-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background-color: #d7007f;
+      color: white;
+      border-radius: 12px;
+      border: none;
+      font-size: 28px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .grey-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 20px;
+      height: 20px;
+      background-color: #ebe7f5;
+      color: white;
+      border-radius: 12px;
+      border: none;
+      font-size: 24px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-options {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      display: none;
+      flex-direction: column-reverse;
+      gap: 15px;
+      z-index: 999;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .option-text {
+      background-color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      margin-right: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      font-size: 14px;
+    }
+
+    .menu-option {
+      width: 50px;
+      height: 50px;
+      background-color: #d7007f;
+      color: white;
+      border-radius: 50%;
+      border: none;
+      font-size: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .icon-grid::after { content: "◼"; }
+    .icon-download::after { content: "↓"; }
+    .icon-left::after { content: "←"; }
+    .icon-right::after { content: "→"; }
+    .icon-qr::after { content: "⌗"; }
+    .icon-reload::after { content: "↻"; }
+
+    .refresh-spinner {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translate(-50%, 0);
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 2000;
+      pointer-events: none;
+    }
+
+    @keyframes spin {
+      from { transform: translate(-50%, 0) rotate(0deg); }
+      to   { transform: translate(-50%, 0) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="image-container" id="imageContainer">
+    <div class="refresh-spinner" id="spinner"></div>
+    <div id="saldo" class="saldo-text">$ 21,203,600</div>
+  </div>
+
+  <!-- Nueva capa blanca translúcida -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <button class="floating-btn">$</button>
+  <button class="grey-btn" id="restarBtn">-</button>
+
+  <div class="menu-options" id="menuOptions">
+    <div class="menu-item"><span class="option-text">Recarga</span><button class="menu-option icon-reload"></button></div>
+    <div class="menu-item"><span class="option-text">Código QR</span><button class="menu-option icon-qr"></button></div>
+    <div class="menu-item"><span class="option-text">Envía</span><button class="menu-option icon-right"></button></div>
+    <div class="menu-item"><span class="option-text">Pide</span><button class="menu-option icon-left"></button></div>
+    <div class="menu-item"><span class="option-text">Saca</span><button class="menu-option icon-download"></button></div>
+    <div class="menu-item"><span class="option-text">Servicios</span><button class="menu-option icon-grid"></button></div>
+  </div>
+
+  <script>
+    const mainBtn = document.querySelector('.floating-btn');
+    const menuOptions = document.getElementById('menuOptions');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const imageContainer = document.getElementById('imageContainer');
+    const spinner = document.getElementById('spinner');
+    const saldoDiv = document.getElementById('saldo');
+    const restarBtn = document.getElementById('restarBtn');
+
+    let saldoActual = 21203600;
+
+    function actualizarSaldo() {
+      saldoDiv.textContent = `$ ${saldoActual.toLocaleString('es-CO')}`;
+    }
+
+    restarBtn.addEventListener('click', () => {
+      saldoActual = Math.max(0, saldoActual - 100000);
+      actualizarSaldo();
+    });
+
+    mainBtn.addEventListener('click', function () {
+      const isVisible = menuOptions.style.display === 'flex';
+      menuOptions.style.display = isVisible ? 'none' : 'flex';
+      menuOverlay.style.display = isVisible ? 'none' : 'block';
+    });
+
+    document.querySelectorAll('.menu-option').forEach(option => {
+      option.addEventListener('click', function () {
+        const action = this.parentElement.querySelector('.option-text').textContent;
+        console.log(`Acción seleccionada: ${action}`);
+      });
+    });
+
+    // Pull to refresh animado
+    let startY = 0;
+    let currentY = 0;
+    let pulling = false;
+
+    document.addEventListener('touchstart', e => {
+      if (window.scrollY === 0) {
+        startY = e.touches[0].clientY;
+        pulling = true;
+      }
+    });
+
+    document.addEventListener('touchmove', e => {
+      if (!pulling) return;
+      currentY = e.touches[0].clientY;
+      let diff = currentY - startY;
+
+      if (diff > 0 && diff < 150) {
+        imageContainer.style.transform = `translateY(${diff}px)`;
+        spinner.style.opacity = diff > 30 ? 1 : 0;
+      }
+    });
+
+    document.addEventListener('touchend', () => {
+      if (!pulling) return;
+      pulling = false;
+
+      let diff = currentY - startY;
+      if (diff > 80) {
+        spinner.style.opacity = 1;
+        imageContainer.style.transition = 'transform 0.3s ease';
+        imageContainer.style.transform = 'translateY(60px)';
+
+        setTimeout(() => {
+          imageContainer.style.transform = 'translateY(0)';
+          spinner.style.opacity = 0;
+        }, 1500);
+      } else {
+        imageContainer.style.transition = 'transform 0.3s ease';
+        imageContainer.style.transform = 'translateY(0)';
+        spinner.style.opacity = 0;
+      }
+
+      setTimeout(() => {
+        imageContainer.style.transition = '';
+      }, 400);
+    });
+  </script>
+</body>
+</html>
