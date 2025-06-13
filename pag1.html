@@ -21,9 +21,21 @@
     .overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 20px;
       overflow-y: auto;
+    }
+
+    .overlay-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ffffff;
+      opacity: 0.95;
+      z-index: 1;
+    }
+
+    .overlay-content {
+      position: relative;
+      z-index: 2;
+      padding: 20px;
     }
 
     .info-box {
@@ -94,9 +106,9 @@
     .select-box .logo-cuadro {
       width: 30px;
       height: 30px;
+      margin-right: 10px;
       background-color: #d7007f;
       border-radius: 5px;
-      margin-right: 10px;
     }
 
     .select-label {
@@ -151,32 +163,35 @@
 </head>
 <body>
   <div class="overlay">
-    <div class="info-box">
-      Revisa bien esta info, porque si le envías la plata a la persona incorrecta en Nequi no podremos recuperarla.
-    </div>
-
-    <div class="form-group">
-      <label for="cel">Cel</label>
-      <input type="tel" id="cel" placeholder="315 003 8455">
-      <div class="subtext">Revisa bien el número para enviarle a la persona correcta</div>
-    </div>
-
-    <div class="form-group">
-      <label for="monto">¿Cuánto?</label>
-      <input type="number" id="monto" placeholder="$ 0">
-    </div>
-
-    <div class="form-group">
-      <input type="text" class="mensaje" placeholder="Mensaje" />
-    </div>
-
-    <div class="select-label">Escoge de donde saldrá la plata</div>
-    <div class="select-box">
-      <div style="display: flex; align-items: center;">
-        <div class="logo-cuadro"></div>
-        Disponible
+    <div class="overlay-bg"></div>
+    <div class="overlay-content">
+      <div class="info-box">
+        Revisa bien esta info, porque si le envías la plata a la persona incorrecta en Nequi no podremos recuperarla.
       </div>
-      <span>›</span>
+
+      <div class="form-group">
+        <label for="cel">Cel</label>
+        <input type="tel" id="cel" placeholder="315 003 8455">
+        <div class="subtext">Revisa bien el número para enviarle a la persona correcta</div>
+      </div>
+
+      <div class="form-group">
+        <label for="monto">¿Cuánto?</label>
+        <input type="number" id="monto" placeholder="$ 0">
+      </div>
+
+      <div class="form-group">
+        <input type="text" class="mensaje" placeholder="Mensaje" />
+      </div>
+
+      <div class="select-label">Escoge de donde saldrá la plata</div>
+      <div class="select-box">
+        <div style="display: flex; align-items: center;">
+          <div class="logo-cuadro"></div>
+          Disponible
+        </div>
+        <span>›</span>
+      </div>
     </div>
   </div>
 
